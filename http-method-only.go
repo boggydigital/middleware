@@ -29,3 +29,7 @@ func PutMethodOnly(next http.Handler) http.Handler {
 func DeleteMethodOnly(next http.Handler) http.Handler {
 	return httpMethodOnly(http.MethodDelete, next)
 }
+
+func PostMethodOnly(next http.Handler) http.Handler {
+	return httpMethodOnly(http.MethodPost, next)
+}
