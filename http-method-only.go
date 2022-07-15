@@ -33,3 +33,7 @@ func DeleteMethodOnly(next http.Handler) http.Handler {
 func PostMethodOnly(next http.Handler) http.Handler {
 	return httpMethodOnly(http.MethodPost, next)
 }
+
+func PatchMethodOnly(next http.Handler) http.Handler {
+	return httpMethodOnly(http.MethodPatch, next)
+}
