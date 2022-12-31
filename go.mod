@@ -1,6 +1,6 @@
 module github.com/boggydigital/middleware
 
-go 1.18
+go 1.19
 
 require (
 	github.com/boggydigital/nod v0.1.19 // indirect

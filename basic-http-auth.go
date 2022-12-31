@@ -9,28 +9,33 @@ import (
 
 const defaultWWWAuth = `Basic realm="Restricted", charset="UTF-8"`
 
-var usernameHash, passwordHash [32]byte
+var usernames, passwords = make(map[string][32]byte), make(map[string][32]byte)
 
-func SetUsername(usr [32]byte) {
-	usernameHash = usr
+func SetUsername(role string, usr [32]byte) {
+	usernames[role] = usr
 }
 
-func SetPassword(pwd [32]byte) {
-	passwordHash = pwd
+func SetPassword(role string, pwd [32]byte) {
+	passwords[role] = pwd
 }
 
-func BasicHttpAuth(next http.Handler) http.Handler {
+func BasicHttpAuth(role string, next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 		if u, p, ok := r.BasicAuth(); ok {
 			uh, ph := sha256.Sum256([]byte(u)), sha256.Sum256([]byte(p))
 
-			um := subtle.ConstantTimeCompare(uh[:], usernameHash[:]) == 1
-			pm := subtle.ConstantTimeCompare(ph[:], passwordHash[:]) == 1
+			if usernameHash, ok := usernames[role]; ok {
+				if passwordHash, ok := passwords[role]; ok {
 
-			if um && pm {
-				next.ServeHTTP(w, r)
-				return
+					um := subtle.ConstantTimeCompare(uh[:], usernameHash[:]) == 1
+					pm := subtle.ConstantTimeCompare(ph[:], passwordHash[:]) == 1
+
+					if um && pm {
+						next.ServeHTTP(w, r)
+						return
+					}
+				}
 			}
 		}
 
