@@ -19,21 +19,23 @@ func SetPassword(role string, pwd [32]byte) {
 	passwords[role] = pwd
 }
 
-func BasicHttpAuth(role string, next http.Handler) http.Handler {
+func BasicHttpAuth(next http.Handler, roles ...string) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 		if u, p, ok := r.BasicAuth(); ok {
 			uh, ph := sha256.Sum256([]byte(u)), sha256.Sum256([]byte(p))
 
-			if usernameHash, ok := usernames[role]; ok {
-				if passwordHash, ok := passwords[role]; ok {
+			for _, role := range roles {
+				if usernameHash, ok := usernames[role]; ok {
+					if passwordHash, ok := passwords[role]; ok {
 
-					um := subtle.ConstantTimeCompare(uh[:], usernameHash[:]) == 1
-					pm := subtle.ConstantTimeCompare(ph[:], passwordHash[:]) == 1
+						um := subtle.ConstantTimeCompare(uh[:], usernameHash[:]) == 1
+						pm := subtle.ConstantTimeCompare(ph[:], passwordHash[:]) == 1
 
-					if um && pm {
-						next.ServeHTTP(w, r)
-						return
+						if um && pm {
+							next.ServeHTTP(w, r)
+							return
+						}
 					}
 				}
 			}
