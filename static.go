@@ -25,6 +25,10 @@ func getStaticContent(w http.ResponseWriter, r *http.Request) bool {
 	return false
 }
 
+func ClearStaticContent() {
+	staticContent = make(map[string][]byte)
+}
+
 func SetStaticContent(path string, content []byte) {
 	staticContent[path] = content
 }
