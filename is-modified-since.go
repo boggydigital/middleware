@@ -1,6 +1,9 @@
 package middleware
 
-import "time"
+import (
+	"net/http"
+	"time"
+)
 
 const (
 	LastModifiedHeader    = "Last-Modified"
@@ -9,7 +12,7 @@ const (
 
 func IsNotModified(ifModifiedSince string, since int64) bool {
 	utcSince := time.Unix(since, 0).UTC()
-	if ims, err := time.Parse(time.RFC1123, ifModifiedSince); err == nil {
+	if ims, err := time.Parse(http.TimeFormat, ifModifiedSince); err == nil {
 		return utcSince.Unix() <= ims.UTC().Unix()
 	}
 	return false
