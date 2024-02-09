@@ -3,7 +3,6 @@ module github.com/boggydigital/middleware
 go 1.22
 
 require (
-	github.com/andybalholm/brotli v1.1.0
 	github.com/boggydigital/nod v0.1.21
 )
 
